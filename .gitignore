@@ -1,0 +1,20 @@
+.idea
+.vscode
+.DS_Store
+Thumbs.db
+
+# Laravel ignores
+core/vendor/
+core/node_modules/
+core/npm-debug.log
+core/yarn-error.log
+core/.env
+core/.phpunit.result.cache
+core/public/storage
+
+# Public HTML ignores
+public_html/storage
+public_html/*.zip
+public_html/*.mp4
+public_html/*.mp3
+public_html/uploads

@@ -1,0 +1,393 @@
+@extends('customer.layouts.master')
+@section('head-tag')
+<title>{{ request()->courseCategory->title ?? 'پادکست ها'}} -  {{cache('templateSetting')['title']}}</title>
+<link rel="stylesheet" href="{{ asset('customer/css/plyr.css') }}" />
+    <meta name="description" content="{{ request()->podcastCategory->meta_description ?? '' }}" />
+    <meta property="og:title"
+        content="{{ cache('templateSetting')['title'] }} - {{ request()->podcastCategory->title ?? 'پادکست ها' }}">
+    <meta property="og:description" content="{{ request()->podcastCategory->meta_description ?? '' }}">
+    <meta property="og:image" content="{{ asset(cache('templateSetting')['logo']) }}">
+    <meta property="og:url"
+        content="{{ route('customer.podcasts', ['podcastCategory' => request()->podcastCategory ? request()->podcastCategory->slug : null]) }}">
+    <meta name="twitter:title"
+        content="{{ cache('templateSetting')['title'] }} - {{ request()->podcastCategory->title ?? 'پادکست ها' }}">
+    <meta name="twitter:description" content="{{ request()->podcastCategory->meta_description ?? '' }}">
+    <meta name="twitter:url"
+        content="{{ route('customer.podcasts', ['podcastCategory' => request()->podcastCategory ? request()->podcastCategory->slug : null]) }}">
+@endsection
+@section('content')
+    <section class="container content lg:blur-0 my-7">
+        <div class="flex items-center justify-between w-full my-7">
+            <h1 class="text-lg font-bold lg:text-3xl text-secondary dark:text-white/80"> پادکست ها</h1>
+            <a href="{{ route('customer.home') }}"
+                class="flex items-center gap-2 text-lg font-bold lg:text-lg group text-main"> بازگشت
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    class="duration-200 rtl:rotate-180 group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none">
+                    <path d="M14.4302 5.92999L20.5002 12L14.4302 18.07" class="stroke-main" stroke="#4A6DFF"
+                        stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M3.5 12H20.33" stroke="#4A6DFF" class="stroke-main" stroke-width="1.5" stroke-miterlimit="10"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
+        </div>
+        <form
+            action="{{ route('customer.podcasts', ['podcastCategory' => request()->podcastCategory ? request()->podcastCategory->slug : null]) }}"
+            method="get">
+            <div class="flex flex-col justify-between h-auto gap-6 py-3 lg:flex-row">
+                <div class="flex flex-col w-full gap-10 lg:w-1/5 " data-aos="fade-right">
+                    <div class="p-3 bg-white  shadow-lg rounded-2xl dark:bg-dark dark:shadow-none h-min">
+                        <div class="relative w-full">
+                            <label for="Search" class="sr-only"> Search </label>
+
+                            <input type="text" id="Search" placeholder="جست و جو کنید ... " name="search"
+                                value="{{ request()->search }}"
+                                class="w-full rounded-xl border-gray-200 py-2.5 pe-10 shadow-sm sm:text-sm dark:bg-secondary bg-white dark:border-gray-700 dark:text-white/80  focus:ring-0 dark:focus:border-main  focus:border-main focus:outline-none" />
+
+                            <span class="absolute inset-y-0 grid w-10 end-0 place-content-center">
+                                <button type="submit" class="text-gray-600 hover:text-gray-700 ">
+                                    <span class="sr-only">Search</span>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                    </svg>
+                                </button>
+                            </span>
+                        </div>
+                        <div class="flex flex-col dark:divide-gray-500" id="accordion-flush" data-accordion="open"
+                            data-active-classes="bg-main/20 text-main dark:bg-secondary rounded-xl">
+
+                            <h2 id="accordion-flush-heading-1" class="my-2">
+                                <button type="button"
+                                    class="flex items-center justify-between w-full p-3 text-left text-gray-500 ont-medium p dark:border-gray-700 dark:text-gray-400"
+                                    data-accordion-target="#accordion-flush-body-1" aria-expanded="false"
+                                    aria-controls="accordion-flush-body-1">
+                                    <span class="flex items-center gap-2 font-bold text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
+                                        </svg>
+
+
+                                        نوع پادکست</span>
+                                    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="M9 5 5 1 1 5" />
+                                    </svg>
+                                </button>
+                            </h2>
+                            <div id="accordion-flush-body-1" class="hidden" aria-labelledby="accordion-flush-heading-1">
+                                <div class="flex flex-col px-3 gap-y-3">
+                                    <div class="flex items-center gap-x-2 text-secondary dark:text-white/80 hover:text-main hover:font-bold  hover:text-main hover:font-bold dark:hover:text-main"><input
+                                            type="radio" name="vip" @if (request('vip') == 0) checked @endif
+                                            id="allSort"
+                                            class="w-4 h-4 border-none rounded-full cursor-pointer form-radio bg-secondary/50 checked:text-main"
+                                            value="0">
+                                        <label for="allSort" class="cursor-pointer"> همه
+                                        </label>
+                                    </div>
+                                    <div class="flex items-center gap-x-2 text-secondary dark:text-white/80 hover:text-main hover:font-bold  hover:text-main hover:font-bold dark:hover:text-main"><input
+                                            type="radio" name="vip" @if (request('vip') == 1) checked @endif
+                                            id="freeSort"
+                                            class="w-4 h-4 border-none rounded-full cursor-pointer form-radio bg-secondary/50 checked:text-main"
+                                            value="1">
+                                        <label for="freeSort" class="cursor-pointer">رایگان
+                                        </label>
+                                    </div>
+                                    <div class="flex items-center gap-x-2 text-secondary dark:text-white/80 hover:text-main hover:font-bold  hover:text-main hover:font-bold dark:hover:text-main"><input
+                                            type="radio" name="vip" @if (request('vip') == 2) checked @endif
+                                            id="specialSort"
+                                            class="w-4 h-4 border-none rounded-full cursor-pointer form-radio bg-secondary/50 checked:text-main"
+                                            value="2">
+                                        <label for="specialSort" class="cursor-pointer">اشتراک ویژه
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <h2 id="accordion-flush-heading-2" class="my-2">
+                                <button type="button"
+                                    class="flex items-center justify-between w-full p-3 font-medium text-left text-gray-500 dark:border-gray-700 dark:text-gray-400"
+                                    data-accordion-target="#accordion-flush-body-2" aria-expanded="false"
+                                    aria-controls="accordion-flush-body-2">
+                                    <span class="flex items-center gap-2 font-bold text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+                                        </svg>
+
+                                        دسته پادکست
+
+                                    </span>
+                                    <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="M9 5 5 1 1 5" />
+                                    </svg>
+                                </button>
+                            </h2>
+                            <div id="accordion-flush-body-2" class="hidden" aria-labelledby="accordion-flush-heading-2	">
+                                <div class="flex flex-col px-3 gap-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-x-2 text-secondary dark:text-white/80 hover:text-main hover:font-bold  hover:text-main hover:font-bold dark:hover:text-main"><a
+                                                href="{{ route('customer.podcasts') }}">همه</a></div>
+                                    </div>
+                                    @foreach ($categories as $category)
+                                        <div class="flex items-center gap-x-2 text-secondary dark:text-white/80 hover:text-main hover:font-bold  hover:text-main hover:font-bold dark:hover:text-main"><a
+                                                href="{{ route('customer.podcasts', $category->slug) }}">{{ $category->title }}</a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="flex item-center gap-2 flex-col mt-3">
+                                <button type="submit"
+                                    class="px-6 py-2  font-medium text-white transition border rounded-lg bg-main border-main shrink-0 hover:bg-transparent hover:text-main focus:outline-none  active:text-main">اعمال
+                                    فیلتر</button>
+                                <a href="{{ route('customer.podcasts') }}"
+                                    class="px-6 py-2 text-center block  font-medium text-main transition border rounded-lg bg-transparent border-main shrink-0 hover:bg-main hover:text-white focus:outline-none  active:text-main">حذف
+                                    فیلترها</a>
+                            </div>
+                        </div>
+        </form>
+        </div>
+        @include('customer.layouts.ads')
+
+        </div>
+        <div class="flex flex-wrap w-full mt-10 gap-y-14 lg:gap-x-4 lg:w-4/5 h-min md:justify-between lg:justify-start"
+            data-aos="fade-down">
+
+            @forelse ($podcasts as $podcast)
+                <div
+                    class="flex lg:flex-row flex-col justify-between text-secondary dark:text-white/80 rounded-xl overflow-hidden flex cursor-pointer h-auto swiper-slide w-full shadow-lg rounded-3xl dark:bg-dark swiper-slide dark:shoadow-none group duration-200">
+                    <div class=" flex lg:w-5/12 w-full p-3">
+                        <a href="{{ route('customer.singlePodcast', $podcast->slug) }}">
+
+                            <img src="{{ asset($podcast->image) }}" alt="{{ $podcast->title }}"
+                                class="rounded-xl object-cover w-full h-full" />
+                        </a>
+
+                    </div>
+                    <div class=" pr-3 p-4 flex flex-col w-full  gap-2 w-2/3">
+                        <div class="flex w-full justify-between items-center">
+                            <a href="{{ route('customer.singlePodcast', $podcast->slug) }}">
+                                <p
+                                    class="text-base font-bold  flex items-center  hover:text-main hover:font-bold dark:hover:text-main">
+                                    {{ $podcast->title }}</p>
+                            </a>
+
+                            <div class="flex items-center gap-2 text-main">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
+                                </svg>
+                                <a href="{{ route('customer.teacher', $podcast->podcaster->username) }}"><span
+                                        class="mt-1">{{ $podcast->podcaster->full_name }}</span></a>
+                            </div>
+
+                        </div>
+                        <div class="flex items-center gap-x-1 text-xs">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
+                            </svg>
+
+                            <span>{{ jalaliDate($podcast->created_at) }}</span>
+                        </div>
+
+
+                        <p class="mt-4 mb-4 text-gray-500 dark:text-gray-400 text-sm">{{ Str::limit($podcast->summary, 392) }}
+                        </p>
+                        @if ($podcast->is_vip == 1 && auth()->check() && auth()->user()->hasActivceSubscribe() || $podcast->is_vip == 0)
+                        <audio class="player" controls   preload="none">
+                            <source src="{{$podcast->linkPodcast($podcast->voice)}}"
+                                type="audio/mp3" />
+                        </audio>
+                        @else
+                        <p class="text-main">برای دسترسی به پادکست  نیاز به اشتراک ویژه میباشد</p>
+                        @endif
+
+
+                    </div>
+
+
+                </div>
+            @empty
+            <div class=" flex items-center justify-center flex-col px-7 py-8 md:py-20 rounded-2xl border border-gray-700 border-dashed w-full">
+                <svg class="w-72" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve">
+
+<g id="OBJECTS">
+<g>
+<g>
+    <g>
+        <rect x="62.099" y="208.47" style="fill:#F5F9FF;" width="166.199" height="122.601"/>
+        <rect x="62.099" y="208.47" style="fill:#D0DBF7;" width="166.199" height="15.292"/>
+    </g>
+    <g>
+        <path style="fill:#F2F2F2;" d="M75.441,216.468c0,1.933-1.567,3.499-3.499,3.499c-1.933,0-3.499-1.567-3.499-3.499      s1.567-3.499,3.499-3.499C73.874,212.969,75.441,214.536,75.441,216.468z"/>
+        <path style="fill:#F2F2F2;" d="M87.224,216.468c0,1.933-1.567,3.499-3.499,3.499s-3.499-1.567-3.499-3.499      s1.567-3.499,3.499-3.499S87.224,214.536,87.224,216.468z"/>
+        <path style="fill:#F2F2F2;" d="M99.007,216.468c0,1.933-1.567,3.499-3.499,3.499c-1.933,0-3.499-1.567-3.499-3.499      s1.567-3.499,3.499-3.499C97.441,212.969,99.007,214.536,99.007,216.468z"/>
+    </g>
+    <polygon style="fill:#E3EBFC;" points="173.573,257.108 165.217,248.753 145.199,268.77 125.18,248.753 116.824,257.108      136.843,277.126 116.824,297.143 125.18,305.499 145.199,285.481 165.217,305.499 173.573,297.143 153.554,277.126    "/>
+</g>
+<g>
+    <g>
+        <rect x="266.123" y="131.145" style="fill:#F5F9FF;" width="166.199" height="122.601"/>
+        <rect x="266.123" y="131.145" style="fill:#D0DBF7;" width="166.199" height="15.292"/>
+    </g>
+    <g>
+        <path style="fill:#F2F2F2;" d="M279.465,139.143c0,1.933-1.567,3.499-3.499,3.499c-1.933,0-3.499-1.567-3.499-3.499      s1.567-3.499,3.499-3.499C277.898,135.644,279.465,137.21,279.465,139.143z"/>
+        <path style="fill:#F2F2F2;" d="M291.248,139.143c0,1.933-1.567,3.499-3.499,3.499c-1.933,0-3.499-1.567-3.499-3.499      s1.567-3.499,3.499-3.499C289.681,135.644,291.248,137.21,291.248,139.143z"/>
+        <path style="fill:#F2F2F2;" d="M303.031,139.143c0,1.933-1.567,3.499-3.499,3.499c-1.933,0-3.499-1.567-3.499-3.499      s1.567-3.499,3.499-3.499C301.464,135.644,303.031,137.21,303.031,139.143z"/>
+    </g>
+    <polygon style="fill:#E3EBFC;" points="377.596,179.783 369.241,171.427 349.222,191.445 329.203,171.427 320.848,179.783      340.866,199.8 320.848,219.818 329.203,228.173 349.222,208.156 369.241,228.173 377.596,219.818 357.578,199.8    "/>
+</g>
+</g>
+<ellipse style="fill:#EDF0FC;" cx="249.001" cy="412.683" rx="203.165" ry="17.555"/>
+<g>
+<g>
+    <path style="fill:#E2E6FF;" d="M199.452,133.181c-1.547-3.243-1.465-6.385,0.245-9.426l0.831-1.449     c0.813-1.324,1.332-2.342,1.558-3.055c0.225-0.712,0.165-1.435-0.184-2.166c-0.88-1.844-2.863-2.03-5.946-0.559     c-1.43,0.682-2.818,1.579-4.162,2.688c-1.343,1.109-2.532,2.34-3.566,3.691l-3.503-7.343c2.287-2.73,5.244-4.96,8.868-6.689     c3.91-1.866,7.401-2.526,10.47-1.98c3.07,0.546,5.295,2.264,6.675,5.157c0.774,1.621,1.034,3.107,0.781,4.457     c-0.254,1.351-0.96,3.063-2.116,5.136c-0.766,1.42-1.311,2.489-1.631,3.208c-0.32,0.719-0.48,1.428-0.476,2.129     c0.003,0.702,0.201,1.466,0.595,2.291l0.433,0.907l-8.393,4.004L199.452,133.181z M205.879,144.135     c-1.245-0.44-2.163-1.281-2.755-2.52c-0.606-1.271-0.686-2.521-0.237-3.75c0.447-1.228,1.308-2.146,2.579-2.752     c1.24-0.592,2.498-0.675,3.774-0.25c1.276,0.427,2.21,1.258,2.801,2.498c0.592,1.24,0.651,2.49,0.179,3.749     c-0.473,1.259-1.329,2.185-2.569,2.776C208.381,144.492,207.122,144.576,205.879,144.135z"/>
+</g>
+<g>
+    <path style="fill:#E2E6FF;" d="M240.199,105.171c2.09-4.99,5.7-8.049,10.83-9.179l2.461-0.521     c2.301-0.415,3.966-0.854,4.993-1.315c1.025-0.461,1.776-1.254,2.248-2.379c1.188-2.837-0.592-5.25-5.336-7.238     c-2.201-0.922-4.599-1.581-7.193-1.977c-2.592-0.397-5.168-0.496-7.721-0.303l4.733-11.299c5.36-0.17,10.829,0.914,16.405,3.25     c6.017,2.52,10.259,5.778,12.725,9.771c2.467,3.995,2.768,8.217,0.904,12.668c-1.045,2.495-2.452,4.277-4.222,5.347     c-1.772,1.069-4.402,1.994-7.89,2.775c-2.364,0.563-4.11,1.025-5.239,1.386c-1.128,0.362-2.085,0.894-2.869,1.601     c-0.786,0.707-1.444,1.696-1.976,2.966l-0.584,1.395l-12.914-5.409L240.199,105.171z M234.344,123.374     c-0.755-1.839-0.731-3.713,0.068-5.621c0.819-1.956,2.143-3.299,3.974-4.028c1.827-0.73,3.721-0.684,5.677,0.135     c1.908,0.799,3.263,2.129,4.066,3.988c0.8,1.86,0.803,3.744,0.004,5.651s-2.144,3.228-4.031,3.961     c-1.888,0.732-3.786,0.699-5.694-0.1C236.452,126.542,235.095,125.212,234.344,123.374z"/>
+</g>
+</g>
+<g>
+<polygon style="fill:#CAD2F9;" points="449.708,285.13 449.708,279.389 445.891,279.389 445.891,285.13 440.15,285.13     440.15,288.947 445.891,288.947 445.891,294.688 449.708,294.688 449.708,288.947 455.45,288.947 455.45,285.13   "/>
+<polygon style="fill:#CAD2F9;" points="413.658,101.36 413.658,92.604 407.837,92.604 407.837,101.36 399.081,101.36     399.081,107.181 407.837,107.181 407.837,115.937 413.658,115.937 413.658,107.181 422.415,107.181 422.415,101.36   "/>
+<polygon style="fill:#CAD2F9;" points="397.791,270.839 397.791,266.658 395.011,266.658 395.011,270.839 390.83,270.839     390.83,273.619 395.011,273.619 395.011,277.8 397.791,277.8 397.791,273.619 401.972,273.619 401.972,270.839   "/>
+<polygon style="fill:#CAD2F9;" points="159.364,125.409 159.364,121.228 156.584,121.228 156.584,125.409 152.403,125.409     152.403,128.189 156.584,128.189 156.584,132.37 159.364,132.37 159.364,128.189 163.545,128.189 163.545,125.409   "/>
+<polygon style="fill:#CAD2F9;" points="127.133,97.758 127.133,92.016 123.316,92.016 123.316,97.758 117.575,97.758     117.575,101.574 123.316,101.574 123.316,107.315 127.133,107.315 127.133,101.574 132.875,101.574 132.875,97.758   "/>
+</g>
+<g>
+<path style="fill:#EEF1FF;" d="M315.663,109.479c0,1.206-0.977,2.183-2.183,2.183c-1.206,0-2.183-0.978-2.183-2.183    c0-1.206,0.978-2.183,2.183-2.183C314.686,107.296,315.663,108.273,315.663,109.479z"/>
+<path style="fill:#EEF1FF;" d="M324.604,71.944c0,1.206-0.978,2.183-2.183,2.183c-1.206,0-2.183-0.978-2.183-2.183    c0-1.206,0.977-2.183,2.183-2.183C323.626,69.761,324.604,70.739,324.604,71.944z"/>
+<circle style="fill:#EEF1FF;" cx="367.255" cy="89.89" r="4.134"/>
+<path style="fill:#EEF1FF;" d="M454.349,245.183c0,1.206-0.977,2.183-2.183,2.183c-1.206,0-2.183-0.978-2.183-2.183    c0-1.206,0.977-2.183,2.183-2.183C453.372,242.999,454.349,243.977,454.349,245.183z"/>
+<path style="fill:#EEF1FF;" d="M452.166,313.347c0,1.206-0.978,2.183-2.183,2.183c-1.206,0-2.183-0.978-2.183-2.183    c0-1.206,0.977-2.183,2.183-2.183C451.189,311.164,452.166,312.141,452.166,313.347z"/>
+<path style="fill:#EEF1FF;" d="M119.758,194.127c0,1.206-0.978,2.183-2.183,2.183c-1.206,0-2.183-0.977-2.183-2.183    c0-1.206,0.977-2.183,2.183-2.183C118.781,191.944,119.758,192.921,119.758,194.127z"/>
+<circle style="fill:#EEF1FF;" cx="81.76" cy="103.581" r="4.134"/>
+<path style="fill:#EEF1FF;" d="M163.286,80.257c0,1.206-0.977,2.183-2.183,2.183c-1.206,0-2.183-0.977-2.183-2.183    c0-1.206,0.978-2.183,2.183-2.183C162.309,78.074,163.286,79.051,163.286,80.257z"/>
+<path style="fill:#EEF1FF;" d="M48.019,211.185c0,1.206-0.977,2.183-2.183,2.183c-1.206,0-2.183-0.978-2.183-2.183    c0-1.206,0.978-2.183,2.183-2.183C47.041,209.002,48.019,209.979,48.019,211.185z"/>
+<path style="fill:#EEF1FF;" d="M48.019,327.529c0,1.206-0.977,2.183-2.183,2.183c-1.206,0-2.183-0.977-2.183-2.183    c0-1.206,0.978-2.183,2.183-2.183C47.041,325.345,48.019,326.323,48.019,327.529z"/>
+</g>
+<g>
+<g>
+    <path style="fill:#6E7FDD;" d="M366.333,393.272c0,0-36.178-72.329,61.95-120.335     C428.283,272.937,435.805,376.005,366.333,393.272z"/>
+    <path style="fill:#B3C9F9;" d="M370.5,384.057c-0.025-10.34,2.136-20.612,5.113-30.522c0.383-1.239,0.723-2.494,1.141-3.721     l1.327-3.657l1.334-3.658l1.506-3.588c1.939-4.821,4.374-9.408,6.673-14.062l3.912-6.727c1.261-2.269,2.693-4.431,4.146-6.578     c1.468-2.137,2.859-4.325,4.388-6.415c1.56-2.068,3.145-4.117,4.739-6.156l2.388-3.058l2.566-2.912l5.168-5.777     c0.846-0.974,1.789-1.862,2.713-2.764l2.781-2.695c1.858-1.79,3.734-3.558,5.621-5.306c-1.62,2.012-3.251,4.004-4.9,5.974     l-2.48,2.945c-0.828,0.978-1.674,1.941-2.421,2.987l-4.677,6.098l-2.356,3.026l-2.194,3.146     c-1.453,2.103-2.915,4.196-4.402,6.269c-1.439,2.106-2.738,4.307-4.113,6.454c-2.854,4.232-5.2,8.766-7.761,13.169     c-4.783,8.996-8.999,18.287-12.485,27.872C374.811,364.003,371.941,373.855,370.5,384.057z"/>
+    <path style="opacity:0.1;fill:#0046A0;" d="M424.611,272.225c-1.375,24.869-9.897,90.98-61.358,105.952     c1.856,7.505,4.109,12.009,4.109,12.009c69.472-17.267,61.95-120.335,61.95-120.335     C427.708,270.635,426.144,271.427,424.611,272.225z"/>
+</g>
+<g>
+    <g>
+        <path style="fill:#FFCF74;" d="M357.48,416.552c0,0,5.148-22.024,26.681-48.714c23.593-29.241,54.357-39.762,67.129-25.707      c12.396,13.641,1.865,32.489-30.067,42.119C389.292,393.881,371.239,398.03,357.48,416.552z"/>
+        <path style="fill:#F9AB43;" d="M441.179,349.788c-7.306,2.89-14.383,6.242-21.334,9.791      c-6.929,3.591-13.694,7.481-20.149,11.826c-6.476,4.308-12.64,9.077-18.358,14.346c-5.697,5.292-10.918,11.111-15.43,17.554      c1.82-3.485,3.969-6.804,6.295-10.001c2.401-3.135,4.947-6.181,7.745-8.984c5.541-5.665,11.77-10.624,18.328-15.04      c3.305-2.172,6.673-4.245,10.124-6.169c3.47-1.886,6.979-3.7,10.576-5.32C426.145,354.51,433.558,351.741,441.179,349.788z"/>
+    </g>
+    <path style="opacity:0.1;fill:#0046A0;" d="M451.29,342.131c-0.692-0.762-1.447-1.438-2.241-2.056     c-10.358,25.37-40.623,43.745-76.374,43.782c-11.973,18.938-15.195,32.695-15.195,32.695     c13.759-18.522,31.812-22.671,63.743-32.302C453.155,374.619,463.687,355.772,451.29,342.131z"/>
+</g>
+<g>
+    <path style="fill:#6E7FDD;" d="M172.159,404.182c0,0-74.319,31.891-116.51-68.875C55.65,335.308,158.981,333.82,172.159,404.182z     "/>
+    <path style="fill:#B3C9F9;" d="M166.224,400.691c-10.323-0.58-20.451-3.336-30.171-6.887c-1.214-0.454-2.447-0.867-3.648-1.356     l-3.573-1.539l-3.573-1.546l-3.494-1.713c-4.7-2.218-9.137-4.916-13.648-7.484l-6.487-4.298     c-2.191-1.391-4.266-2.947-6.325-4.523c-2.047-1.59-4.151-3.107-6.147-4.756c-1.973-1.678-3.926-3.38-5.868-5.09l-2.913-2.562     l-2.757-2.732l-5.465-5.496c-0.923-0.902-1.754-1.894-2.601-2.87l-2.528-2.934c-1.679-1.96-3.333-3.936-4.969-5.922     c1.914,1.735,3.808,3.48,5.677,5.241l2.795,2.647c0.928,0.884,1.839,1.784,2.841,2.591l5.815,5.025l2.883,2.529l3.012,2.374     c2.014,1.574,4.018,3.155,6.002,4.761c2.019,1.56,4.14,2.985,6.202,4.483c4.058,3.096,8.447,5.703,12.693,8.517     c8.701,5.3,17.73,10.052,27.095,14.092C146.457,395.215,156.125,398.657,166.224,400.691z"/>
+    <path style="opacity:0.1;fill:#0046A0;" d="M57.745,340.139c24.747,2.825,90.247,15.195,102.186,67.444     c7.6-1.415,12.229-3.4,12.229-3.4c-13.179-70.362-116.51-68.875-116.51-68.875C56.339,336.955,57.038,338.562,57.745,340.139z"/>
+</g>
+<g>
+    <g>
+        <path style="fill:#FFCF74;" d="M141.595,377.032c0,0-0.362-22.615-15.748-53.263c-16.858-33.578-44.693-50.381-60.154-39.354      c-15.007,10.704-8.709,31.355,20.455,47.536C115.313,348.133,132.075,356.015,141.595,377.032z"/>
+        <path style="fill:#F9AB43;" d="M73.951,294.043c6.527,4.373,12.733,9.15,18.773,14.091c6.01,4.978,11.797,10.214,17.184,15.828      c5.416,5.583,10.429,11.551,14.899,17.912c4.446,6.379,8.315,13.173,11.359,20.426c-1.04-3.792-2.436-7.491-4.032-11.108      c-1.682-3.572-3.524-7.089-5.664-10.421c-4.214-6.71-9.25-12.877-14.723-18.583c-2.77-2.823-5.622-5.563-8.586-8.175      c-2.992-2.579-6.036-5.095-9.208-7.441C87.642,301.845,80.985,297.567,73.951,294.043z"/>
+    </g>
+    <path style="opacity:0.1;fill:#0046A0;" d="M65.693,284.416c0.838-0.598,1.719-1.098,2.626-1.534     c4.744,26.989,30.426,51.362,65.357,58.977c7.686,21.046,7.919,35.173,7.919,35.173c-9.52-21.017-26.283-28.9-55.447-45.08     C56.984,315.771,50.687,295.12,65.693,284.416z"/>
+</g>
+</g>
+<g>
+<path style="fill:#F9AB43;" d="M347.449,398.927c-0.809,5.35-6.185,9.728-11.947,9.728H165.008c-5.762,0-11.197-4.37-12.078-9.71    l-28.229-171.197c-0.881-5.34,3.114-9.71,8.876-9.71h230.736c5.762,0,9.815,4.378,9.007,9.728L347.449,398.927z"/>
+<g>
+    <polygon style="fill:#C2CEF2;" points="304.667,160.833 161.103,160.833 161.103,363.08 336.664,363.08 336.664,193.299    "/>
+    <polygon style="fill:#7997F2;" points="304.667,160.833 336.899,193.064 304.667,193.064    "/>
+    <polygon style="fill:#AFC2E8;" points="297.615,224.788 283.3,210.473 249.001,244.769 214.702,210.473 200.386,224.788      234.685,259.085 200.386,293.382 214.702,307.698 249.001,273.401 283.3,307.698 297.615,293.382 263.317,259.085    "/>
+</g>
+<g>
+    <path style="fill:#FFCF74;" d="M265.661,276.779c-4.527,0.006-9.322-3.529-10.656-7.855l-6.577-21.331     c-1.334-4.326-6.129-7.865-10.656-7.865H120.822c-4.527,0-7.583,3.647-6.792,8.104l28.547,160.863     c0.791,4.457,5.142,8.104,9.669,8.104h202.588c4.527,0,8.81-3.658,9.519-8.129l19.645-123.934     c0.709-4.471-2.415-8.125-6.942-8.119L265.661,276.779z"/>
+    <g>
+        <path style="fill:#FFFFFF;" d="M237.169,352.167c0-6.262,2.486-11.142,7.458-14.642l2.394-1.656      c2.271-1.472,3.852-2.685,4.743-3.636c0.889-0.951,1.336-2.133,1.336-3.545c0-3.56-2.979-5.341-8.933-5.341      c-2.762,0-5.616,0.369-8.563,1.106c-2.945,0.736-5.739,1.781-8.378,3.13v-14.179c5.646-2.578,11.97-3.867,18.967-3.867      c7.55,0,13.536,1.581,17.954,4.742c4.42,3.162,6.629,7.535,6.629,13.12c0,3.131-0.706,5.662-2.117,7.596      c-1.413,1.934-3.807,4.097-7.182,6.491c-2.271,1.658-3.93,2.932-4.973,3.822c-1.043,0.891-1.826,1.887-2.347,2.992      c-0.523,1.106-0.783,2.456-0.783,4.05v1.751h-16.206V352.167z M239.058,374.218c-1.628-1.626-2.441-3.637-2.441-6.031      c0-2.454,0.813-4.48,2.441-6.077c1.624-1.596,3.667-2.394,6.122-2.394c2.394,0,4.435,0.813,6.124,2.439      c1.686,1.628,2.532,3.637,2.532,6.031c0,2.394-0.845,4.405-2.532,6.031c-1.689,1.626-3.73,2.439-6.124,2.439      C242.725,376.657,240.682,375.844,239.058,374.218z"/>
+    </g>
+    <path style="opacity:0.1;fill:#0046A0;" d="M377.055,276.616l-12.669,0.018c0.279,2.917,0.428,5.861,0.428,8.831     c0,66.435-71.104,120.291-158.814,120.291c-23.496,0-45.797-3.868-65.862-10.804l2.439,13.742     c0.791,4.457,5.142,8.104,9.669,8.104h202.588c4.527,0,8.81-3.658,9.519-8.129l19.645-123.934     C384.706,280.264,381.582,276.611,377.055,276.616z"/>
+</g>
+<g style="opacity:0.3;">
+    <path style="fill:#FFFFFF;" d="M133.686,263.602c0.602,4.038,1.204,8.076,1.807,12.114c1.433,9.609,2.866,19.217,4.299,28.826     c1.745,11.702,3.49,23.403,5.235,35.104c1.498,10.046,2.996,20.091,4.494,30.137c0.498,3.338,0.995,6.675,1.493,10.013     c0.234,1.567,0.367,3.193,0.707,4.742c0.015,0.066,0.02,0.135,0.03,0.202c0.205,1.375,1.941,2.133,3.164,1.796     c1.473-0.405,2.002-1.785,1.796-3.164c-0.602-4.038-1.204-8.076-1.807-12.114c-1.433-9.609-2.866-19.217-4.299-28.826     c-1.745-11.701-3.49-23.403-5.235-35.104c-1.498-10.046-2.996-20.091-4.494-30.137c-0.498-3.338-0.995-6.675-1.493-10.013     c-0.234-1.567-0.367-3.193-0.707-4.742c-0.015-0.066-0.02-0.135-0.03-0.202c-0.205-1.375-1.941-2.133-3.164-1.796     C134.01,260.843,133.48,262.223,133.686,263.602L133.686,263.602z"/>
+</g>
+</g>
+<g>
+<path style="fill:#EB725F;" d="M416.009,174.54c-15.808,0-28.623,12.815-28.623,28.623c0,7.065,2.565,13.528,6.807,18.52    l-1.196,14.738l13.676-6.2c2.927,1.01,6.066,1.566,9.336,1.566c15.808,0,28.623-12.815,28.623-28.623    S431.818,174.54,416.009,174.54z"/>
+<g>
+    <path style="fill:#F2F2F2;" d="M414.028,217.816c-0.523-0.524-0.785-1.17-0.785-1.94c0-0.77,0.262-1.416,0.785-1.94     c0.524-0.524,1.17-0.786,1.94-0.786c0.77,0,1.424,0.262,1.964,0.786c0.538,0.523,0.808,1.17,0.808,1.94     c0,0.77-0.271,1.417-0.808,1.94c-0.54,0.523-1.194,0.785-1.964,0.785C415.198,218.601,414.552,218.339,414.028,217.816z      M412.412,185.622h7.205l-1.339,23.049h-4.528L412.412,185.622z"/>
+</g>
+<path style="opacity:0.1;fill:#0046A0;" d="M400.329,218.33c-3.107,0-6.138-0.273-9.064-0.788    c0.855,1.468,1.835,2.854,2.929,4.141l-1.196,14.738l13.676-6.2c2.927,1.01,6.066,1.566,9.336,1.566    c15.808,0,28.623-12.815,28.623-28.623c0-3.831-0.759-7.484-2.124-10.824C436.777,207.416,420.064,218.33,400.329,218.33z"/>
+</g>
+<g>
+<path style="fill:#F9AB43;" d="M122.749,166.797v-27.141c0-3.259-2.667-5.926-5.926-5.926H67.353    c-3.259,0-5.926,2.667-5.926,5.926v34.202c0,3.259,2.667,5.926,5.926,5.926h44.291h5.178h20.201L122.749,166.797z"/>
+<g>
+    <g>
+        <path style="fill:#FFFFFF;" d="M83.818,152.945c0,2.604-1.513,4.714-3.378,4.714c-1.866,0-3.379-2.111-3.379-4.714      c0-2.604,1.513-4.714,3.379-4.714C82.305,148.231,83.818,150.342,83.818,152.945z"/>
+        <path style="fill:#FFFFFF;" d="M106.278,152.945c0,2.604-1.513,4.714-3.379,4.714c-1.866,0-3.378-2.111-3.378-4.714      c0-2.604,1.513-4.714,3.378-4.714C104.766,148.231,106.278,150.342,106.278,152.945z"/>
+    </g>
+    <g>
+        <path style="fill:#FFFFFF;" d="M83.927,166.127c1.158-1.269,2.77-2.266,4.373-2.844c4.058-1.463,7.98,0.065,11.071,2.844      c0.825,0.742,2.052-0.477,1.222-1.222c-3.426-3.08-7.871-4.889-12.428-3.4c-1.999,0.653-4.029,1.832-5.46,3.4      C81.956,165.725,83.175,166.951,83.927,166.127L83.927,166.127z"/>
+    </g>
+</g>
+<path style="opacity:0.1;fill:#0046A0;" d="M122.749,166.797v-27.141c0-3.259-2.667-5.926-5.926-5.926h-5.071    c0.88,3.224,1.353,6.566,1.353,9.996c0,14.417-8.191,27.327-21.113,36.059h19.653h5.178h20.201L122.749,166.797z"/>
+</g>
+<g>
+<g>
+    <g>
+        <path style="fill:#EB725F;" d="M293.696,318.81c-15.864,15.864-15.864,41.586,0,57.45c15.864,15.864,41.586,15.864,57.45,0      c15.864-15.864,15.864-41.586,0-57.45C335.281,302.946,309.56,302.946,293.696,318.81z M346.489,371.604      c-13.292,13.292-34.844,13.292-48.136,0c-13.292-13.293-13.292-34.844,0-48.136c13.293-13.293,34.844-13.293,48.136,0      C359.781,336.76,359.781,358.311,346.489,371.604z"/>
+        <circle style="opacity:0.3;fill:#FFFFFF;" cx="322.421" cy="347.535" r="34.037"/>
+    </g>
+    <g>
+        <g>
+
+                <rect x="366.938" y="363.084" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -171.2415 377.8948)" style="fill:#6E7FDD;" width="7.202" height="65.14"/>
+        </g>
+        <g>
+
+                <rect x="352.389" y="369.11" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -165.2154 363.3506)" style="fill:#EB725F;" width="7.202" height="23.99"/>
+        </g>
+    </g>
+</g>
+<path style="fill:#FFFFFF;" d="M302.604,333.539c1.292-3.725,4.122-6.738,7.526-8.83c3.426-2.077,7.494-3.192,11.563-3.191    c4.069-0.01,8.14,1.102,11.567,3.181c3.406,2.09,6.236,5.108,7.521,8.84c-3.722-1.257-6.869-2.252-9.996-2.86    c-3.101-0.629-6.094-0.917-9.093-0.932c-2.999,0.005-5.995,0.291-9.097,0.921C309.467,331.275,306.319,332.275,302.604,333.539z"/>
+</g>
+</g>
+</svg>
+                <p class="text-lg md:text-xl text-center font-black text-dark dark:text-white mt-8 md:mt-12">متاسفانه پادکستی  مطابق با جستجوی شما پیدا نشد ):</p>
+            </div>
+            @endforelse
+        </div>
+
+
+    </section>
+    </div>
+
+    {{ $podcasts->links('customer.layouts.paginate') }}
+@endsection
+@section('script')
+<script src="{{asset('customer/js/plyr.js')}}"></script>
+    <script>
+        let players = document.querySelectorAll(".player");
+        players.forEach(item => {
+            new Plyr(item, {
+                speed: {
+                    selected: 1,
+                    options: [0.5, 1, 2]
+                },
+                controls: ['play', 'progress', 'current-time', 'settings',
+                'volume'], // Include only necessary controls
+
+            });
+        });
+    </script>
+@endsection

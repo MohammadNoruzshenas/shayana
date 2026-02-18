@@ -344,5 +344,11 @@ class Permission extends Model
             'description' => 'مدیریت پادکست ها',
             'status' => 1
         ],
+
+        [
+            'name' => 'manage_game',
+            'description' => 'مدیریت بازی ها',
+            'status' => 1
+        ],
     ];
 }

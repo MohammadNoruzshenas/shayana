@@ -70,6 +70,11 @@ class PaymentController extends Controller
         }
         $callBackRoute =  'customer.sales-process.payment-call-back';
         $paymentService->payment((int)$order->order_final_amount * 10, $order, $payment, $callBackRoute);
+
+        // =================== TEST MODE - bypass payment gateway ===================
+       
+        //return $this->CourseRegistration($order->order_final_amount, $payment, $order);
+       
     }
 
 

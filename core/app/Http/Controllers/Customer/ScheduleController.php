@@ -14,7 +14,11 @@ class ScheduleController extends Controller
      */
     public function index(Request $request)
     {
-        $schedules = WeeklySchedule::with(['scheduleItems.lession.season.parent.course'])
+        $schedules = WeeklySchedule::with([
+            'scheduleItems.lession.season.parent.course',
+            'scheduleItems.game.mainSeason',
+            'scheduleItems.game.subSeason'
+        ])
             ->where('user_id', Auth::id())
             ->where('status', 1)
             ->orderBy('week_start_date', 'desc')
@@ -35,7 +39,11 @@ class ScheduleController extends Controller
         }
 
         // Load relationships
-        $schedule->load(['scheduleItems.lession.season.parent.course']);
+        $schedule->load([
+            'scheduleItems.lession.season.parent.course',
+            'scheduleItems.game.mainSeason',
+            'scheduleItems.game.subSeason'
+        ]);
 
         return view('customer.schedule.show', compact('schedule'));
     }
@@ -51,7 +59,11 @@ class ScheduleController extends Controller
             return response()->json(['error' => 'تاریخ شروع هفته الزامی است'], 400);
         }
 
-        $schedules = WeeklySchedule::with(['scheduleItems.lession.season.parent.course'])
+        $schedules = WeeklySchedule::with([
+            'scheduleItems.lession.season.parent.course',
+            'scheduleItems.game.mainSeason',
+            'scheduleItems.game.subSeason'
+        ])
             ->where('user_id', Auth::id())
             ->where('status', 1)
             ->where('week_start_date', $weekStartDate)

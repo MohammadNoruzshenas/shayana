@@ -45,6 +45,7 @@ use App\Http\Controllers\Admin\User\PermissionController;
 use App\Http\Controllers\Admin\User\RoleController;
 use App\Http\Controllers\Admin\User\UserController;
 use App\Http\Controllers\Admin\UserLessionReadController;
+use App\Http\Controllers\Admin\GameController;
 use App\Http\Controllers\Auth\Customer\AuthController;
 use App\Http\Controllers\Customer\Content\BlogController;
 use App\Http\Controllers\Customer\Content\PodcastController;
@@ -177,6 +178,11 @@ Route::prefix('profile')->middleware(UserCheckLogin::class)->group(function () {
         Route::get('/get-week-schedule', [\App\Http\Controllers\Customer\ScheduleController::class, 'getWeekSchedule'])->name('customer.schedule.get-week');
     });
 
+    // Customer Game Routes
+    Route::prefix('game')->group(function () {
+        Route::get('/show/{game}', [\App\Http\Controllers\Customer\Market\GameController::class, 'show'])->name('customer.game.show');
+    });
+
     Route::namespace('SalesProcess')->group(function () {
         //cart
         Route::get('/cart', [CartController::class, 'cart'])->name('customer.sales-process.cart');
@@ -202,7 +208,18 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('admin.index');
     Route::get('/marketing', [DashboardController::class, 'marketing'])->name('admin.marketing');
     Route::get('/notify', [DashboardController::class, 'notify'])->name('admin.notify');
-
+    
+    Route::prefix('game')->group(function () {
+        Route::get('/', [GameController::class, 'index'])->name('admin.game.index');
+        Route::post('/store', [GameController::class, 'store'])->name('admin.game.store');
+        Route::get('/edit/{game}', [GameController::class, 'edit'])->name('admin.game.edit');
+        Route::put('/update/{game}', [GameController::class, 'update'])->name('admin.game.update');
+        Route::delete('/destroy/{game}', [GameController::class, 'destroy'])->name('admin.game.destroy');
+        Route::get('/get-courses', [GameController::class, 'getCourses'])->name('admin.game.get-courses');
+        Route::get('/get-seasons-by-course', [GameController::class, 'getSeasonsByCourse'])->name('admin.game.get-seasons-by-course');
+        Route::get('/get-sub-seasons-by-main-season', [GameController::class, 'getSubSeasonsByMainSeason'])->name('admin.game.get-sub-seasons-by-main-season');
+        Route::get('/get-games-by-sub-season', [GameController::class, 'getGamesBySubSeason'])->name('admin.game.get-games-by-sub-season');
+    });
 
     Route::prefix('user')->namespace('User')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('admin.user.index');

@@ -331,6 +331,14 @@
             </a>
         </li>
         @endpermission
+        @permission('show-user-lession-read')
+        <li class="item-li i-game">
+            <a href="{{ route('admin.game.index') }}"> بازی
+                <i class="fa-solid fa-gamepad"></i>
+            </a>
+        </li>
+
+        @endpermission
         @permission('manage_discount')
             <button class="accordion"> <i class="fa-solid fa-percent"></i> تخفیف</button>
             <div class="panel">

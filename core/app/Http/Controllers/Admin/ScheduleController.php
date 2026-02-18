@@ -70,47 +70,95 @@ class ScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'week_start_date' => 'required',
-            'title' => 'nullable|string|max:255',
-            'schedule' => 'array',
-            'schedule.*.*.main_season_id' => 'nullable|exists:seasons,id',
-            'schedule.*.*.sub_season_id' => 'nullable|exists:seasons,id',
-            'schedule.*.*.lession_id' => 'nullable|exists:lessions,id',
-            'schedule.*.*.notes' => 'nullable|string|max:500',
-        ]);
+        try {
+            \Log::info('=== SCHEDULE STORE START ===');
+            \Log::info('User ID: ' . $request->user_id);
+            \Log::info('Week Start Date: ' . $request->week_start_date);
+            
+            // Validate input
+            $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'week_start_date' => 'required',
+                'title' => 'nullable|string|max:255',
+                'schedule' => 'nullable|array',
+            ]);
+            
+            \Log::info('Validation passed');
 
-        DB::transaction(function () use ($request) {
-            // Create weekly schedule
+            // Convert date FIRST before transaction
+            $dateStr = convertPersianToEnglish($request->week_start_date);
+            \Log::info('Persian to English conversion done: ' . $dateStr);
+            
+            $miladiDate = jalaliDateToMiladi($dateStr, "Y/m/d");
+            \Log::info('Jalali to Miladi conversion done: ' . ($miladiDate ? $miladiDate->format('Y-m-d') : 'null'));
+
+            // Create weekly schedule WITHOUT transaction first
             $schedule = WeeklySchedule::create([
                 'user_id' => $request->user_id,
-                'week_start_date' => jalaliDateToMiladi(convertPersianToEnglish($request->week_start_date),"Y/m/d"),
-                'title' => $request->title,
+                'week_start_date' => $miladiDate,
+                'title' => $request->title ?? '',
                 'status' => 1,
             ]);
+            
+            \Log::info('Weekly schedule created with ID: ' . $schedule->id);
 
             // Create schedule items
-            if ($request->has('schedule')) {
+            $itemCount = 0;
+            if ($request->has('schedule') && is_array($request->schedule)) {
                 foreach ($request->schedule as $dayIndex => $slots) {
+                    if (!is_array($slots)) continue;
+                    
                     foreach ($slots as $slotIndex => $slotData) {
-                        // Allow creating schedule items with either lesson_id OR notes (or both)
-                        if (!empty($slotData['lession_id']) || !empty($slotData['notes'])) {
+                        if (!is_array($slotData)) continue;
+                        
+                        // Log what we're processing
+                        $lessionId = !empty($slotData['lession_id']) ? (int)$slotData['lession_id'] : null;
+                        $gameId = !empty($slotData['game_id']) ? (int)$slotData['game_id'] : null;
+                        $notes = isset($slotData['notes']) ? trim($slotData['notes']) : null;
+                        
+                        // Only create if at least one field has data
+                        if ($lessionId || $gameId || $notes) {
                             ScheduleItem::create([
                                 'weekly_schedule_id' => $schedule->id,
-                                'day_of_week' => $dayIndex,
-                                'time_slot' => $slotIndex,
-                                'lession_id' => $slotData['lession_id'] ?? null,
-                                'notes' => $slotData['notes'] ?? null,
+                                'day_of_week' => (int)$dayIndex,
+                                'time_slot' => (int)$slotIndex,
+                                'game_id' => $gameId,
+                                'lession_id' => $lessionId,
+                                'notes' => $notes,
+                            ]);
+                            $itemCount++;
+                            \Log::info('Created schedule item', [
+                                'day' => $dayIndex,
+                                'slot' => $slotIndex,
+                                'lession_id' => $lessionId,
+                                'game_id' => $gameId,
+                                'has_notes' => !empty($notes)
                             ]);
                         }
                     }
                 }
             }
-        });
-
-        return redirect()->route('admin.schedule.index')
-            ->with('success', 'برنامه هفتگی با موفقیت ایجاد شد.');
+            
+            \Log::info('Schedule items created: ' . $itemCount);
+            \Log::info('=== SCHEDULE STORE COMPLETE ===');
+            
+            return redirect()->route('admin.schedule.index')
+                ->with('swal-success', 'برنامه هفتگی با موفقیت ایجاد شد.');
+                
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation error in schedule store', [
+                'errors' => $e->errors()
+            ]);
+            throw $e;
+        } catch (\Exception $e) {
+            \Log::error('ERROR in schedule store', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
     /**
@@ -129,7 +177,7 @@ class ScheduleController extends Controller
      */
     public function edit($id)
     {
-        $schedule = WeeklySchedule::with(['scheduleItems.lession.season.parent.course.teacher'])
+        $schedule = WeeklySchedule::with(['scheduleItems.lession.season.parent.course.teacher', 'scheduleItems.game.course', 'scheduleItems.game.mainSeason', 'scheduleItems.game.subSeason'])
             ->findOrFail($id);
             $courses = Course::get();
         $users = User::where('status', 1)->get();
@@ -143,53 +191,94 @@ class ScheduleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $schedule = WeeklySchedule::findOrFail($id);
+        try {
+            \Log::info('=== SCHEDULE UPDATE START ===');
+            \Log::info('Schedule ID: ' . $id);
+            \Log::info('User ID: ' . $request->user_id);
+            
+            $schedule = WeeklySchedule::findOrFail($id);
 
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'week_start_date' => 'required',
-            'title' => 'nullable|string|max:255',
-            'status' => 'required|in:0,1',
-            'schedule' => 'array',
-            'schedule.*.*.main_season_id' => 'nullable|exists:seasons,id',
-            'schedule.*.*.sub_season_id' => 'nullable|exists:seasons,id',
-            'schedule.*.*.lession_id' => 'nullable|exists:lessions,id',
-            'schedule.*.*.notes' => 'nullable|string|max:500',
-        ]);
+            $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'week_start_date' => 'required',
+                'title' => 'nullable|string|max:255',
+                'status' => 'required|in:0,1',
+                'schedule' => 'nullable|array',
+            ]);
 
-        DB::transaction(function () use ($request, $schedule) {
+            \Log::info('Validation passed');
+
+            // Convert date FIRST before database operations
+            $dateStr = convertPersianToEnglish($request->week_start_date);
+            \Log::info('Persian to English conversion done: ' . $dateStr);
+            
+            $miladiDate = jalaliDateToMiladi($dateStr, "Y/m/d");
+            \Log::info('Jalali to Miladi conversion done: ' . ($miladiDate ? $miladiDate->format('Y-m-d') : 'null'));
+
             // Update weekly schedule
             $schedule->update([
                 'user_id' => $request->user_id,
-                'week_start_date' => jalaliDateToMiladi(convertPersianToEnglish($request->week_start_date),"Y/m/d"),
-                'title' => $request->title,
+                'week_start_date' => $miladiDate,
+                'title' => $request->title ?? '',
                 'status' => $request->status,
             ]);
+            
+            \Log::info('Weekly schedule updated');
 
             // Delete existing schedule items
             $schedule->scheduleItems()->delete();
+            \Log::info('Old schedule items deleted');
 
             // Create new schedule items
-            if ($request->has('schedule')) {
+            $itemCount = 0;
+            if ($request->has('schedule') && is_array($request->schedule)) {
                 foreach ($request->schedule as $dayIndex => $slots) {
+                    if (!is_array($slots)) continue;
+                    
                     foreach ($slots as $slotIndex => $slotData) {
-                        // Allow creating schedule items with either lesson_id OR notes (or both)
-                        if (!empty($slotData['lession_id']) || !empty($slotData['notes'])) {
+                        if (!is_array($slotData)) continue;
+                        
+                        // Log what we're processing
+                        $lessionId = !empty($slotData['lession_id']) ? (int)$slotData['lession_id'] : null;
+                        $gameId = !empty($slotData['game_id']) ? (int)$slotData['game_id'] : null;
+                        $notes = isset($slotData['notes']) ? trim($slotData['notes']) : null;
+                        
+                        // Only create if at least one field has data
+                        if ($lessionId || $gameId || $notes) {
                             ScheduleItem::create([
                                 'weekly_schedule_id' => $schedule->id,
-                                'day_of_week' => $dayIndex,
-                                'time_slot' => $slotIndex,
-                                'lession_id' => $slotData['lession_id'] ?? null,
-                                'notes' => $slotData['notes'] ?? null,
+                                'day_of_week' => (int)$dayIndex,
+                                'time_slot' => (int)$slotIndex,
+                                'game_id' => $gameId,
+                                'lession_id' => $lessionId,
+                                'notes' => $notes,
                             ]);
+                            $itemCount++;
                         }
                     }
                 }
             }
-        });
+            
+            \Log::info('Schedule items created: ' . $itemCount);
+            \Log::info('=== SCHEDULE UPDATE COMPLETE ===');
 
-        return redirect()->route('admin.schedule.index')
-            ->with('success', 'برنامه هفتگی با موفقیت به‌روزرسانی شد.');
+            return redirect()->route('admin.schedule.index')
+                ->with('swal-success', 'برنامه هفتگی با موفقیت به‌روزرسانی شد.');
+                
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation error in schedule update', [
+                'errors' => $e->errors()
+            ]);
+            throw $e;
+        } catch (\Exception $e) {
+            \Log::error('ERROR in schedule update', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
     /**

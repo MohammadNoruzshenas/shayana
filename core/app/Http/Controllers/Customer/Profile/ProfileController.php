@@ -55,7 +55,7 @@ class ProfileController extends Controller
             
         $schedules = collect();
         if ($latestScheduleDate) {
-            $schedules = WeeklySchedule::with(['scheduleItems.lession.season.parent.course'])
+            $schedules = WeeklySchedule::with(['scheduleItems.lession.season.parent.course', 'scheduleItems.game'])
                 ->where('user_id', auth()->user()->id)
                 ->where('status', 1)
                 ->where('week_start_date', $latestScheduleDate)

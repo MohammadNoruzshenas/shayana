@@ -1,6 +1,6 @@
-
 <html lang="fa">
 @include('admin.layouts.head-tag')
+
 <body>
     @include('admin.layouts.side-bar')
 
@@ -16,6 +16,7 @@
 </body>
 @include('admin.layouts.footer')
 @include('admin.layouts.script')
+@yield('script')
 @include('admin.alerts.sweetalert.error')
 @include('admin.alerts.sweetalert.success')
 <section class="toast-wrapper flex-row-reverse">

@@ -13,6 +13,7 @@ class ScheduleItem extends Model
         'weekly_schedule_id',
         'day_of_week',
         'time_slot',
+        'game_id',
         'lession_id',
         'notes'
     ];
@@ -20,6 +21,11 @@ class ScheduleItem extends Model
     public function weeklySchedule()
     {
         return $this->belongsTo(WeeklySchedule::class);
+    }
+
+    public function game()
+    {
+        return $this->belongsTo(\App\Models\Game::class);
     }
 
     public function lession()

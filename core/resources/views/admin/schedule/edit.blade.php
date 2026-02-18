@@ -193,12 +193,12 @@
                                             @php
                                                 $currentItem = $organizedSchedule[$dayIndex]['slots'][$slot] ?? null;
                                                 
-                                                $selectedCourse = $currentItem?->lession?->season?->parent?->course;
-                                                $selectedMainSeason = $currentItem?->lession?->season->parent;
-                                                $selectedSeason = $currentItem?->lession?->season;
+                                                $selectedCourse = $currentItem?->lession?->season?->parent?->course ?? $currentItem?->game?->course;
+                                                $selectedMainSeason = $currentItem?->lession?->season->parent ?? $currentItem?->game?->mainSeason;
+                                                $selectedSeason = $currentItem?->lession?->season ?? $currentItem?->game?->subSeason;
                                                 $selectedLesion = $currentItem?->lession;
-                                                $allSeasons = $currentItem ? \App\Models\Market\Season::where('course_id',$selectedCourse?->id)->where('parent_id',null)
-                                                ->with(['children.lession'])->get() : [];
+                                                $selectedGame = $currentItem?->game;
+                                                $allSeasons = $selectedCourse ? \App\Models\Market\Season::where('course_id',$selectedCourse->id)->where('parent_id',null) ->with(['children.lession'])->get() : [];
                                             @endphp
                                             <td class="lesson-cell {{ $currentItem ? 'has-lesson' : '' }}">
                                                 <!-- Course Selection -->
@@ -242,6 +242,18 @@
                                                         {{ $selectedSeason ? $selectedSeason->title : 'ابتدا فصل اصلی را انتخاب کنید' }}
                                                     </option>
 
+                                                </select>
+                                                
+                                                <!-- Game Selection -->
+                                                <select name="schedule[{{ $dayIndex }}][{{ $slot }}][game_id]" 
+                                                        class="form-control form-control-sm game-select mb-1"
+                                                        id="game_{{ $dayIndex }}_{{ $slot }}"
+                                                        data-day="{{ $dayIndex }}" 
+                                                        data-slot="{{ $slot }}"
+                                                >
+                                                    <option value="{{ $selectedGame ? $selectedGame->id : ''}}">
+                                                        {{ $selectedGame ? $selectedGame->title : 'انتخاب بازی (اختیاری)' }}
+                                                    </option>
                                                 </select>
                                                 
                                                 <!-- Lesson Selection -->
@@ -463,6 +475,7 @@
                 var day = $(this).data('day');
                 var slot = $(this).data('slot');
                 var subSeasonSelect = $('#sub_season_' + day + '_' + slot);
+                var gameSelect = $('#game_' + day + '_' + slot);
                 var lessonSelect = $('#lesson_' + day + '_' + slot);
                 
                 if (mainSeasonId) {
@@ -470,7 +483,11 @@
                     subSeasonSelect.prop('disabled', false);
                     subSeasonSelect.html('<option value="">در حال بارگذاری...</option>');
                     
-                    // Reset and disable lesson select
+                    // Reset and disable game and lesson selects
+                    gameSelect.prop('disabled', true);
+                    gameSelect.html('<option value="">انتخاب بازی</option>');
+                    refreshCustomDropdown(gameSelect);
+
                     lessonSelect.prop('disabled', true);
                     lessonSelect.html('<option value="">ابتدا زیر فصل را انتخاب کنید</option>');
                     
@@ -524,10 +541,49 @@
                 var subSeasonId = $(this).val();
                 var day = $(this).data('day');
                 var slot = $(this).data('slot');
+                var gameSelect = $('#game_' + day + '_' + slot);
                 var lessonSelect = $('#lesson_' + day + '_' + slot);
 
                 
                 if (subSeasonId) {
+                    // Enable game select and load games
+                    gameSelect.prop('disabled', false);
+                    gameSelect.html('<option value="">در حال بارگذاری...</option>');
+
+                    // Get course and main season values
+                    var courseSelect = $(this).closest('td').find('.course-select');
+                    var mainSeasonSelect = $(this).closest('td').find('.main-season-select');
+                    var courseId = courseSelect.val();
+                    var mainSeasonId = mainSeasonSelect.val();
+
+                    // Fetch games for this sub season
+                    $.ajax({
+                        url: '{{ route('admin.game.get-games-by-sub-season') }}',
+                        type: 'GET',
+                        data: {
+                            course_id: courseId,
+                            main_season_id: mainSeasonId,
+                            sub_season_id: subSeasonId
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(games) {
+                            gameSelect.html('<option value="">انتخاب بازی (اختیاری)</option>');
+
+                            if (games && games.length > 0) {
+                                $.each(games, function(index, game) {
+                                    gameSelect.append('<option value="' + game.id + '">' + game.title + '</option>');
+                                });
+                            }
+                            refreshCustomDropdown(gameSelect);
+                        },
+                        error: function() {
+                            gameSelect.html('<option value="">خطا در بارگذاری بازی‌ها</option>');
+                            refreshCustomDropdown(gameSelect);
+                        }
+                    });
+
                     // Enable lesson select and load lessons
                     lessonSelect.prop('disabled', false);
                     lessonSelect.html('<option value="">در حال بارگذاری...</option>');
@@ -568,12 +624,22 @@
                         }
                     });
                 } else {
+                    // Disable game select
+                    gameSelect.prop('disabled', true);
+                    gameSelect.html('<option value="">انتخاب بازی</option>');
+                    refreshCustomDropdown(gameSelect);
+
                     // Disable lesson select
                     lessonSelect.prop('disabled', true);
                     lessonSelect.html('<option value="">ابتدا زیر فصل را انتخاب کنید</option>');
                     refreshCustomDropdown(lessonSelect);
                 }
                 
+                updateCellVisual($(this).closest('.lesson-cell'));
+            });
+
+            // Handle game selection change
+            $('.game-select').on('change', function() {
                 updateCellVisual($(this).closest('.lesson-cell'));
             });
 
@@ -590,9 +656,10 @@
             // Visual feedback function
             function updateCellVisual($cell) {
                 var hasLesson = $cell.find('.lesson-select').val();
+                var hasGame = $cell.find('.game-select').val();
                 var hasNotes = $cell.find('textarea[name*="[notes]"]').val().trim();
                 
-                if (hasLesson || hasNotes) {
+                if (hasLesson || hasGame || hasNotes) {
                     $cell.addClass('has-lesson');
                     $cell.css('background-color', '#2a4d3a');
                 } else {
@@ -608,6 +675,7 @@
                 var slot = $this.data('slot');
                 var mainSeasonSelect = $('#main_season_' + day + '_' + slot);
                 var subSeasonSelect = $('#sub_season_' + day + '_' + slot);
+                var gameSelect = $('#game_' + day + '_' + slot);
                 var lessonSelect = $('#lesson_' + day + '_' + slot);
                 
 
@@ -618,6 +686,7 @@
                 refreshCustomDropdown($this);
                 refreshCustomDropdown(mainSeasonSelect);
                 refreshCustomDropdown(subSeasonSelect);
+                refreshCustomDropdown(gameSelect);
                 refreshCustomDropdown(lessonSelect);
             });
 

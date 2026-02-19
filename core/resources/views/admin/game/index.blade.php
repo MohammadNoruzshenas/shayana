@@ -3,7 +3,7 @@
 @section('head-tag')
     <title>مدیریت بازی‌ها</title>
     {{-- اضافه کردن Tailwind CSS --}}
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('dashboard/js/tailwindcss.js') }}"></script>
     <script>
         tailwind.config = {
             corePlugins: {
@@ -12,7 +12,7 @@
         }
     </script>
     {{-- Alpine.js for custom dropdowns --}}
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="{{ asset('dashboard/js/alpine.js') }}"></script>
     <style>
         /* نمایش textarea اگر CKEditor لود نشود */
         #description {
@@ -225,8 +225,9 @@
                                                     title="ویرایش">
                                                     <i class="fa fa-edit"></i>
                                                 </a>
-                                                <form action="{{ route('admin.game.destroy', $game->id) }}" method="POST"
-                                                    class="inline-block" onsubmit="return confirm('آیا از حذف این بازی اطمینان دارید؟')">
+                                                <form action="{{ route('admin.game.destroy', $game->id) }}"
+                                                    method="POST" class="inline-block"
+                                                    onsubmit="return confirm('آیا از حذف این بازی اطمینان دارید؟')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"

@@ -2,8 +2,8 @@
 
 @section('head-tag')
     <title>ویرایش بازی</title>
-    {{-- اضافه کردن Tailwind CSS --}}
-    <script src="https://cdn.tailwindcss.com"></script>
+     {{-- اضافه کردن Tailwind CSS --}}
+    <script src="{{ asset('dashboard/js/tailwindcss.js') }}"></script>
     <script>
         tailwind.config = {
             corePlugins: {
@@ -12,7 +12,7 @@
         }
     </script>
     {{-- Alpine.js for custom dropdowns --}}
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+   <script defer src="{{ asset('dashboard/js/alpine.js') }}"></script>
     <style>
         /* نمایش textarea اگر CKEditor لود نشود */
         #description {

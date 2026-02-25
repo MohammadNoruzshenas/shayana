@@ -83,7 +83,7 @@
             <div class="container flex items-center justify-between w-full">
                <div class="flex items-center gap-10">
                <a href="{{route('customer.home')}}" class="flex items-center gap-x-1">
-                     <image class="w-10 h-10" src="{{asset(cache('templateSetting')['logo'])}}">
+                     <image class="w-7 h-10" src="{{asset(cache('templateSetting')['logo'])}}">
 
 
                 </a>

@@ -77,175 +77,147 @@
             </div>
 
             <!-- Weekly Schedule Table -->
-            <div class="w-full overflow-hidden bg-gray rounded-3xl dark:bg-dark">
+            <div class="w-full bg-gray rounded-3xl dark:bg-dark">
                 <div class="p-6">
                     <h3 class="text-xl font-bold text-secondary dark:text-white/80 mb-6">جدول برنامه هفتگی</h3>
-                    <div class="w-full overflow-x-auto">
-                        <table
-                            class="w-full border-collapse bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-                            <thead>
-                                <tr class="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                                    <th class="px-4 py-3 text-center font-bold">روز / تایم</th>
-                                    <th class="px-4 py-3 text-center font-bold">تایم 1</th>
-                                    <th class="px-4 py-3 text-center font-bold">تایم 2</th>
-                                    <th class="px-4 py-3 text-center font-bold">تایم 3</th>
-                                    <th class="px-4 py-3 text-center font-bold">تایم 4</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php
-                                    $daysOfWeek = [
-                                        'روز اول',
-                                        'روز دوم',
-                                        'روز سوم',
-                                        'روز چهارم',
-                                        'روز پنجم',
-                                        'روز ششم',
-                                        'روز هفتم',
-                                    ];
-                                    $organizedSchedule = $schedule->organized_schedule;
-                                @endphp
-                                @foreach ($daysOfWeek as $dayIndex => $dayName)
-                                    <tr
-                                        class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                        <td
-                                            class="px-4 py-6 bg-gradient-to-r from-red-500 to-pink-500 text-dark-500 font-bold text-center">
-                                            {{ $dayName }}
-                                        </td>
-                                        @for ($slot = 1; $slot <= 4; $slot++)
-                                            @php
-                                                $currentItem = $organizedSchedule[$dayIndex]['slots'][$slot] ?? null;
-                                            @endphp
-                                            <td
-                                                class="px-4 py-4 text-center {{ $currentItem ? 'bg-green-50 dark:bg-green-900/20' : 'bg-gray-50 dark:bg-gray-800' }}">
-                                                @if ($currentItem)
-                                                    <div class="space-y-2">
-                                                        @if ($currentItem->lession)
-                                                            @php
-                                                                $course = $currentItem->lession->season->parent->course;
-                                                                $selectedMainSeason =
-                                                                    $currentItem?->lession?->season->parent;
-                                                                $selectedSeason = $currentItem?->lession?->season;
-                                                                $selectedLesion = $currentItem?->lession;
-                                                            @endphp
-                                                            <div class="space-y-2">
-                                                                <div
-                                                                    class="font-bold text-green-700 dark:text-green-300 text-sm">
-                                                                    🎯 {{ $selectedLesion->title }}
-                                                                </div>
-                                                                <div
-                                                                    class="font-bold text-green-700 dark:text-green-300 text-sm">
-                                                                    {{ $selectedMainSeason->title . '-' . $selectedSeason->title }}
-                                                                </div>
-                                                                @if ($currentItem->lession->season)
-                                                                    <div class="flex justify-center gap-2 mt-2 flex-wrap">
-                                                                        @if (!is_null($currentItem->lession->link))
-                                                                            {{-- Download Video Icon --}}
-                                                                            <a href="{{ route('customer.lesson.video.download', ['course' => $course->slug, 'lession' => $currentItem->lession]) }}"
-                                                                                class="flex items-center gap-1 px-2 py-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
-                                                                                title="دانلود مستقیم ویدیو">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                    fill="none" viewBox="0 0 24 24"
-                                                                                    stroke-width="1.5" stroke="currentColor"
-                                                                                    class="w-4 h-4">
-                                                                                    <path stroke-linecap="round"
-                                                                                        stroke-linejoin="round"
-                                                                                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                                                                                </svg>
-                                                                                <span>دانلود</span>
-                                                                            </a>
 
-                                                                            {{-- Open Video in New Window Icon --}}
-                                                                            <a href="{{ route('customer.course.showLession', ['course' => $course->slug, 'lession' => $currentItem->lession]) }}"
-                                                                                target="_blank"
-                                                                                class="flex items-center gap-1 px-2 py-1 text-xs text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 transition-colors"
-                                                                                title="باز کردن ویدیو در صفحه جدید">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                    fill="none" viewBox="0 0 24 24"
-                                                                                    stroke-width="1.5" stroke="currentColor"
-                                                                                    class="w-4 h-4">
-                                                                                    <path stroke-linecap="round"
-                                                                                        stroke-linejoin="round"
-                                                                                        d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                                                                </svg>
-                                                                                <span>باز کردن</span>
-                                                                            </a>
-                                                                        @endif
-                                                                        @if ($currentItem->game)
-                                                                            <a href="{{ route('customer.game.show', $currentItem->game) }}"
-                                                                                class="flex items-center gap-1 px-2 py-1 text-xs text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors"
-                                                                                title="مشاهده جزئیات بازی" target="_blank">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                    fill="none" viewBox="0 0 24 24"
-                                                                                    stroke-width="1.5"
-                                                                                    stroke="currentColor" class="w-4 h-4">
-                                                                                    <path stroke-linecap="round"
-                                                                                        stroke-linejoin="round"
-                                                                                        d="M14.25 6.087c0-.355.186-.676.461-.841A6.52 6.52 0 0021 4.5c.355 0 .676.186.84.461a.844.844 0 00.15.427m-8.25 0a2.25 2.25 0 00-1.5-2.25v2.25m0 0c0 1.235.92 2.25 2.25 2.25s2.25-1.015 2.25-2.25m0 0V6.087a2.25 2.25 0 00-1.5-2.25M12 21c4.485 0 8.25-1.979 8.25-4.5S16.485 12 12 12m0 0c-4.485 0-8.25 1.979-8.25 4.5S7.515 21 12 21" />
-                                                                                </svg>
-                                                                                <span>بازی</span>
-                                                                            </a>
-                                                                        @endif
-                                                                    </div>
-                                                                @endif
-                                                            </div>
-                                                        @endif
-                                                        @if ($currentItem->game)
-                                                            {{-- Game Content --}}
-                                                            <div
-                                                                class="space-y-2 {{ $currentItem->lession ? 'mt-4' : '' }}">
-                                                                <div
-                                                                    class="font-bold text-purple-700 dark:text-purple-300 text-sm ">
-                                                                    🎮 {{ $currentItem->game->title }}
-                                                                </div>
-                                                                <div
-                                                                    class="font-semibold text-purple-600 dark:text-purple-400 text-xs text-center">
-                                                                    {{ $currentItem->game->mainSeason->title ?? '' }}
-                                                                    @if ($currentItem->game->mainSeason && $currentItem->game->subSeason)
-                                                                        -
-                                                                    @endif
-                                                                    {{ $currentItem->game->subSeason->title ?? '' }}
-                                                                </div>
-                                                                <div class="flex justify-center gap-2 mt-2">
-                                                                    <a href="{{ route('customer.game.show', $currentItem->game) }}"
-                                                                        class="flex items-center gap-1 px-2 py-1 text-xs text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors"
-                                                                        title="مشاهده جزئیات بازی" target="_blank">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                                            fill="none" viewBox="0 0 24 24"
-                                                                            stroke-width="1.5" stroke="currentColor"
-                                                                            class="w-4 h-4">
-                                                                            <path stroke-linecap="round"
-                                                                                stroke-linejoin="round"
-                                                                                d="M14.25 6.087c0-.355.186-.676.461-.841A6.52 6.52 0 0021 4.5c.355 0 .676.186.84.461a.844.844 0 00.15.427m-8.25 0a2.25 2.25 0 00-1.5-2.25v2.25m0 0c0 1.235.92 2.25 2.25 2.25s2.25-1.015 2.25-2.25m0 0V6.087a2.25 2.25 0 00-1.5-2.25M12 21c4.485 0 8.25-1.979 8.25-4.5S16.485 12 12 12m0 0c-4.485 0-8.25 1.979-8.25 4.5S7.515 21 12 21" />
-                                                                        </svg>
-                                                                        <span>بازی</span>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        @endif
+                    <!-- Responsive Schedule Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        @php
+                            $daysOfWeek = [
+                                ['name' => 'روز اول', 'color' => '#ED1C24'],
+                                ['name' => 'روز دوم', 'color' => '#F15A25'],
+                                ['name' => 'روز سوم', 'color' => '#68C184'],
+                                ['name' => 'روز چهارم', 'color' => '#FFD400'],
+                                ['name' => 'روز پنجم', 'color' => '#BD1A8D'],
+                                ['name' => 'روز ششم', 'color' => '#14B1E7'],
+                                ['name' => 'روز هفتم', 'color' => '#2E3192'],
+                            ];
+                            $organizedSchedule = $schedule->organized_schedule;
+                        @endphp
+                        @foreach ($daysOfWeek as $dayIndex => $day)
+                            <div
+                                class="rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden backdrop-blur-sm hover:shadow-2xl dark:hover:shadow-2xl dark:hover:shadow-gray-900/50 transition-all duration-500 ease-out transform hover:-translate-y-1 hover:scale-105 scroll-smooth">
+                                <!-- Day Header -->
+                                <div style="background: linear-gradient(135deg, {{ $day['color'] }} 0%, {{ $day['color'] }}dd 100%)"
+                                    class="px-6 py-4 border-b text-white transition-all duration-500">
+                                    <h4 class="text-lg font-semibold tracking-wide">
+                                        {{ $day['name'] }}
+                                    </h4>
+                                </div>
+
+                                <!-- Time Slots -->
+                                <div
+                                    class="px-6 py-4 space-y-3 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500 scroll-smooth">
+                                    @for ($slot = 1; $slot <= 4; $slot++)
+                                        @php
+                                            $currentItem = $organizedSchedule[$dayIndex]['slots'][$slot] ?? null;
+                                        @endphp
+                                        <div
+                                            class="pb-3 {{ $slot !== 4 ? 'border-b border-gray-200 dark:border-gray-700' : '' }} transition-all duration-300">
+                                            <div
+                                                class="text-xs font-medium text-gray-400 dark:text-gray-500 mb-2 transition-colors duration-300">
+                                                تایم {{ $slot }}
+                                            </div>
+
+                                            @if ($currentItem)
+                                                @if ($currentItem->lession)
+                                                    @php
+                                                        $course = $currentItem->lession->season->parent->course;
+                                                        $selectedMainSeason = $currentItem?->lession?->season->parent;
+                                                        $selectedSeason = $currentItem?->lession?->season;
+                                                        $selectedLesion = $currentItem?->lession;
+                                                    @endphp
+                                                    <div style="border-left: 4px solid {{ $day['color'] }}"
+                                                        class="rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-3 space-y-2 transition-all duration-300 hover:shadow-md dark:hover:shadow-lg dark:hover:shadow-gray-900/30 hover:border-opacity-50 hover:scale-105 origin-left cursor-default">
+                                                        <div style="color: {{ $day['color'] }}"
+                                                            class="text-sm font-bold transition-all duration-300">
+                                                            {{ $selectedLesion->title }}
+                                                        </div>
+                                                        <div style="color: {{ $day['color'] }}; opacity: 0.8"
+                                                            class="text-xs font-medium transition-opacity duration-300 group-hover:opacity-100">
+                                                            {{ $selectedMainSeason->title }} -
+                                                            {{ $selectedSeason->title }}
+                                                        </div>
+
                                                         @if ($currentItem->notes)
-                                                            <div
-                                                                class="text-xs text-gray-600 dark:text-gray-400 italic bg-gray-100 dark:bg-gray-700 p-2 rounded">
+                                                            <div style="background-color: {{ $day['color'] }}15; border-left: 2px solid {{ $day['color'] }}"
+                                                                class="text-xs italic p-2 rounded">
                                                                 📝 {{ $currentItem->notes }}
                                                             </div>
                                                         @endif
-                                                        @if (!$currentItem->lession && !$currentItem->game && !$currentItem->notes)
-                                                            <div class="text-gray-400 dark:text-gray-500 text-sm italic">
-                                                                ❌ تایم خالی
+
+                                                        @if ($currentItem->lession->season)
+                                                            <div class="flex gap-2 pt-2">
+                                                                @if (!is_null($currentItem->lession->link))
+                                                                    <a href="{{ route('customer.lesson.video.download', ['course' => $course->slug, 'lession' => $currentItem->lession]) }}"
+                                                                        style="color: {{ $day['color'] }}; border: 1px solid {{ $day['color'] }}; background-color: {{ $day['color'] }}08"
+                                                                        class="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md hover:shadow-md hover:scale-110 hover:bg-opacity-50 transition-all duration-300 ease-out transform"
+                                                                        title="دانلود ویدیو">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="none" viewBox="0 0 24 24"
+                                                                            stroke-width="2" stroke="currentColor"
+                                                                            class="w-4 h-4 transition-transform duration-300 group-hover:scale-110">
+                                                                            <path stroke-linecap="round"
+                                                                                stroke-linejoin="round"
+                                                                                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                                                        </svg>
+                                                                        دانلود
+                                                                    </a>
+                                                                    <a href="{{ route('customer.course.showLession', ['course' => $course->slug, 'lession' => $currentItem->lession]) }}"
+                                                                        target="_blank"
+                                                                        style="color: {{ $day['color'] }}; border: 1px solid {{ $day['color'] }}; background-color: {{ $day['color'] }}08"
+                                                                        class="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md hover:shadow-md hover:scale-110 hover:bg-opacity-50 transition-all duration-300 ease-out transform"
+                                                                        title="باز کردن ویدیو">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="none" viewBox="0 0 24 24"
+                                                                            stroke-width="2" stroke="currentColor"
+                                                                            class="w-4 h-4 transition-transform duration-300 group-hover:scale-110">
+                                                                            <path stroke-linecap="round"
+                                                                                stroke-linejoin="round"
+                                                                                d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                                                        </svg>
+                                                                        باز کردن
+                                                                    </a>
+                                                                @endif
+                                                            </div>
+                                                        @endif
+
+                                                        @if ($currentItem->game)
+                                                            <div class="pt-2">
+                                                                <a href="{{ route('customer.game.show', $currentItem->game) }}"
+                                                                    target="_blank"
+                                                                    style="color: white; background-color: {{ $day['color'] }}"
+                                                                    class="w-full inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md hover:shadow-lg hover:scale-110 transition-all duration-300 ease-out transform"
+                                                                    title="انجام بازی">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                        viewBox="0 0 24 24" stroke-width="2"
+                                                                        stroke="currentColor"
+                                                                        class="w-4 h-4 transition-transform duration-300 group-hover:rotate-12">
+                                                                        <path stroke-linecap="round"
+                                                                            stroke-linejoin="round"
+                                                                            d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                                                                    </svg>
+                                                                    بازی
+                                                                </a>
                                                             </div>
                                                         @endif
                                                     </div>
                                                 @else
-                                                    <div class="text-gray-400 dark:text-gray-500 text-sm italic">
-                                                        ❌ تایم خالی
+                                                    <div class="text-xs text-gray-400 dark:text-gray-500 italic">
+                                                        خالی
                                                     </div>
                                                 @endif
-                                            </td>
-                                        @endfor
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                            @else
+                                                <div class="text-xs text-gray-400 dark:text-gray-500 italic">
+                                                    خالی
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endfor
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>

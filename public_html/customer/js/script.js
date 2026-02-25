@@ -1,32 +1,50 @@
 let themeToggleDarkIcon = document.getElementById("lightModeBtn");
 let themeToggleLightIcon = document.getElementById("DarkModeBtn");
 
-themeToggleDarkIcon.addEventListener("click", () => {
-  themeToggleDarkIcon.classList.add("hidden");
-  themeToggleLightIcon.classList.remove("hidden");
-  document.documentElement.classList.remove("dark");
-  localStorage.setItem("themeISOMarket", "light");
-});
-
-themeToggleLightIcon.addEventListener("click", () => {
-  themeToggleLightIcon.classList.add("hidden");
-  themeToggleDarkIcon.classList.remove("hidden");
-  document.documentElement.classList.add("dark");
-  localStorage.setItem("themeISOMarket", "dark");
-});
-
-
-    window.addEventListener("load", () => {
-    if (localStorage.getItem('openTab') === null) {
-    localStorage.setItem('openTab', 'tab1');
-    }
-
-  if (localStorage.getItem("themeISOMarket") == "light") {
+// Function to update theme UI
+function updateThemeUI() {
+  const theme = localStorage.getItem("themeISOMarket");
+  const html = document.documentElement;
+  
+  if (theme === "light") {
+    // Light theme active - show dark mode button
     themeToggleDarkIcon.classList.add("hidden");
     themeToggleLightIcon.classList.remove("hidden");
+    html.classList.remove("dark");
   } else {
+    // Dark theme active - show light mode button
     themeToggleLightIcon.classList.add("hidden");
     themeToggleDarkIcon.classList.remove("hidden");
+    html.classList.add("dark");
+  }
+}
+
+// Light mode button click
+themeToggleDarkIcon.addEventListener("click", () => {
+  localStorage.setItem("themeISOMarket", "light");
+  document.documentElement.classList.remove("dark");
+  updateThemeUI();
+});
+
+// Dark mode button click
+themeToggleLightIcon.addEventListener("click", () => {
+  localStorage.setItem("themeISOMarket", "dark");
+  document.documentElement.classList.add("dark");
+  updateThemeUI();
+});
+
+// Initialize on page load
+window.addEventListener("load", () => {
+  // Set default theme to light if not set
+  if (localStorage.getItem('themeISOMarket') === null) {
+    localStorage.setItem('themeISOMarket', 'light');
+  }
+  
+  // Update theme UI on load
+  updateThemeUI();
+  
+  if (localStorage.getItem('openTab') === null) {
+    localStorage.setItem('openTab', 'tab1');
   }
      const tabs = document.querySelectorAll(".tab");
     const tabBtns = document.querySelectorAll(".tabbtn");

@@ -64,7 +64,10 @@ class ProfileController extends Controller
                 ->get();
         }
 
-        return view('customer.profile.index', compact('plans', 'orders', 'course', 'cartItems', 'subscription', 'notifactions', 'payments', 'installments', 'schedules'));
+        $events = \App\Models\Event::orderBy('publish_date', 'desc')->get();
+        $parentTrainings = \App\Models\ParentTraining::orderBy('created_at', 'desc')->get();
+
+        return view('customer.profile.index', compact('plans', 'orders', 'course', 'cartItems', 'subscription', 'notifactions', 'payments', 'installments', 'schedules', 'events', 'parentTrainings'));
     }
     public function update(ProfileUserRequest $request, ImageService $imageService)
     {

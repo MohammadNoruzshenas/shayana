@@ -350,5 +350,11 @@ class Permission extends Model
             'description' => 'مدیریت بازی ها',
             'status' => 1
         ],
+
+        [
+            'name' => 'manage_event',
+            'description' => 'مدیریت رویداد ها',
+            'status' => 1
+        ],
     ];
 }

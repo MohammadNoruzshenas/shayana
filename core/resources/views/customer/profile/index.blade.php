@@ -175,6 +175,28 @@
                     برنامه من
                 </div>
 
+                <div data-tabopen="tab9" onclick="switchTab('tab9', this)"
+                    class="flex items-center w-full gap-2 p-2 font-medium cursor-pointer text-main tabbtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5m-9-6h.008v.008H12V9zm0 3.75h.008v.008H12v-.008zm0 3.75h.008v.008H12v-.008z" />
+                    </svg>
+
+                    رویدادها
+                </div>
+
+                <div data-tabopen="tab10" onclick="switchTab('tab10', this)"
+                    class="flex items-center w-full gap-2 p-2 font-medium cursor-pointer text-main tabbtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.49-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
+                    </svg>
+
+                    آموزش والدین
+                </div>
+
 
 
 
@@ -1121,6 +1143,18 @@
                                                                                 </svg>
                                                                                 باز کردن
                                                                             </a>
+                                                                            @if(($selectedMainSeason && str_contains($selectedMainSeason->title, 'موزیکال')) || ($selectedSeason && str_contains($selectedSeason->title, 'موزیکال')))
+                                                                                <a href="{{ route('customer.course.showLession', ['course' => $course->slug, 'lession' => $currentItem->lession]) }}?audio=1"
+                                                                                    target="_blank"
+                                                                                    style="color: {{ $day['color'] }}; border: 1px solid {{ $day['color'] }}; background-color: {{ $day['color'] }}08"
+                                                                                    class="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md hover:opacity-80 transition-all"
+                                                                                    title="پخش صوتی">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+                                                                                    </svg>
+                                                                                    دانلود mp4
+                                                                                </a>
+                                                                            @endif
                                                                         @endif
                                                                     </div>
                                                                 @endif
@@ -1192,7 +1226,147 @@
                 @endif
             </div>
 
-        </div>
+            <!-- Events Tab -->
+            <div id="tab9" class="flex flex-col hidden w-full gap-6 p-5 bg-gray tab rounded-3xl dark:bg-dark">
+                <div class="flex items-center justify-between mb-2">
+                    <div>
+                        <h2 class="text-3xl font-bold text-secondary dark:text-white">رویدادها</h2>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">آخرین رویدادها و اطلاعیه‌ها</p>
+                    </div>
+                </div>
+
+                @if ($events->count() > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach ($events as $event)
+                            <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col">
+                                {{-- Event Image --}}
+                                <div class="relative h-48 overflow-hidden">
+                                    @if ($event->image)
+                                        <img src="{{ asset($event->image) }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="{{ $event->title }}">
+                                    @else
+                                        <div class="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-16 h-16 text-blue-200 dark:text-blue-900/50">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5" />
+                                            </svg>
+                                        </div>
+                                    @endif
+                                    
+                                    {{-- Date Badge --}}
+                                    @if($event->publish_date)
+                                        <div class="absolute top-4 right-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm">
+                                            <span class="text-xs font-bold text-blue-600 dark:text-blue-400">
+                                                {{ \Morilog\Jalali\Jalalian::forge($event->publish_date)->format('%d %B %Y') }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                {{-- Content --}}
+                                <div class="p-5 flex flex-col flex-1">
+                                    <h3 class="text-lg font-bold text-secondary dark:text-white mb-2 line-clamp-1">
+                                        {{ $event->title }}
+                                    </h3>
+                                    
+                                    <div class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-1">
+                                        {{ strip_tags($event->description) }}
+                                    </div>
+
+                                    <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+                                        <a href="{{ route('customer.event.show', $event) }}" class="text-blue-600 dark:text-blue-400 font-bold text-sm hover:underline flex items-center gap-1">
+                                            مشاهده جزئیات
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                            </svg>
+                                        </a>
+
+                                        @if($event->link)
+                                            <a href="{{ $event->link }}" target="_blank" class="p-2 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-100 transition-colors" title="ورود به رویداد">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                                                </svg>
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-16 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="mx-auto w-20 h-20 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-blue-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">هنوز رویدادی ثبت نشده است</h3>
+                        <p class="text-gray-500 dark:text-gray-400">به زودی رویدادهای جدید در این بخش نمایش داده می‌شوند.</p>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Parent Training Tab -->
+            <div id="tab10" class="flex flex-col hidden w-full gap-6 p-5 bg-gray tab rounded-3xl dark:bg-dark">
+                <div class="flex items-center justify-between mb-2">
+                    <div>
+                        <h2 class="text-3xl font-bold text-secondary dark:text-white">آموزش والدین</h2>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">ویدیوهای آموزشی اختصاصی برای والدین گرامی</p>
+                    </div>
+                </div>
+
+                @if ($parentTrainings->count() > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach ($parentTrainings as $training)
+                            <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col">
+                                {{-- Video Preview --}}
+                                <div class="relative h-48 overflow-hidden bg-black">
+                                    <video class="w-full h-full object-cover" preload="metadata">
+                                        <source src="{{ asset($training->video_path) }}#t=0.5" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <div class="absolute inset-0 flex items-center justify-center bg-black/30 group cursor-pointer" onclick="openVideoModal('{{ asset($training->video_path) }}', '{{ $training->title }}')">
+                                        <div class="w-14 h-14 bg-main/90 rounded-full flex items-center justify-center ring-4 ring-white/30 transition-transform duration-300 group-hover:scale-110">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" class="w-6 h-6 ml-1">
+                                                <path d="M8 5v14l11-7z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Content --}}
+                                <div class="p-5 flex flex-col flex-1">
+                                    <h3 class="text-lg font-bold text-secondary dark:text-white mb-2 line-clamp-1">
+                                        {{ $training->title }}
+                                    </h3>
+                                    
+                                    <div class="text-gray-500 dark:text-gray-400 text-sm line-clamp-3 mb-4 flex-1">
+                                        {{ strip_tags($training->description) }}
+                                    </div>
+
+                                    <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+                                        <button onclick="openVideoModal('{{ asset($training->video_path) }}', '{{ $training->title }}')" class="w-full py-2 bg-main/10 text-main font-bold text-sm rounded-xl hover:bg-main hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                                            مشاهده ویدیو
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-16 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="mx-auto w-20 h-20 bg-main/5 dark:bg-main/10 rounded-full flex items-center justify-center mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-main">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.49-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">هنوز آموزش جدیدی ثبت نشده است</h3>
+                        <p class="text-gray-500 dark:text-gray-400">به زودی آموزش‌های کاربردی برای والدین در این بخش قرار می‌گیرد.</p>
+                    </div>
+                @endif
+            </div>
 
     </section>
 
@@ -1747,6 +1921,25 @@
 
         function closeAddTicket() {
             document.getElementById('addTicket').classList.add('hidden');
+        }
+
+        function openVideoModal(videoSrc, title) {
+            Swal.fire({
+                title: title,
+                html: `
+                    <div class="aspect-video w-full h-full bg-black rounded-lg overflow-hidden">
+                        <video class="w-full h-full" controls autoplay>
+                            <source src="${videoSrc}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                `,
+                width: '800px',
+                showCloseButton: true,
+                showConfirmButton: false,
+                background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                color: document.documentElement.classList.contains('dark') ? '#fff' : '#1f2937',
+            });
         }
     </script>
 @endsection

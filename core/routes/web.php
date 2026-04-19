@@ -183,6 +183,11 @@ Route::prefix('profile')->middleware(UserCheckLogin::class)->group(function () {
         Route::get('/show/{game}', [\App\Http\Controllers\Customer\Market\GameController::class, 'show'])->name('customer.game.show');
     });
 
+    // Customer Event Routes
+    Route::prefix('event')->group(function () {
+        Route::get('/show/{event}', [\App\Http\Controllers\Customer\EventController::class, 'show'])->name('customer.event.show');
+    });
+
     Route::namespace('SalesProcess')->group(function () {
         //cart
         Route::get('/cart', [CartController::class, 'cart'])->name('customer.sales-process.cart');
@@ -219,6 +224,22 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
         Route::get('/get-seasons-by-course', [GameController::class, 'getSeasonsByCourse'])->name('admin.game.get-seasons-by-course');
         Route::get('/get-sub-seasons-by-main-season', [GameController::class, 'getSubSeasonsByMainSeason'])->name('admin.game.get-sub-seasons-by-main-season');
         Route::get('/get-games-by-sub-season', [GameController::class, 'getGamesBySubSeason'])->name('admin.game.get-games-by-sub-season');
+    });
+
+    Route::prefix('event')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\EventController::class, 'index'])->name('admin.event.index');
+        Route::post('/store', [\App\Http\Controllers\Admin\EventController::class, 'store'])->name('admin.event.store');
+        Route::get('/edit/{event}', [\App\Http\Controllers\Admin\EventController::class, 'edit'])->name('admin.event.edit');
+        Route::put('/update/{event}', [\App\Http\Controllers\Admin\EventController::class, 'update'])->name('admin.event.update');
+        Route::delete('/destroy/{event}', [\App\Http\Controllers\Admin\EventController::class, 'destroy'])->name('admin.event.destroy');
+    });
+
+    Route::prefix('parent-training')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'index'])->name('admin.parent-training.index');
+        Route::post('/store', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'store'])->name('admin.parent-training.store');
+        Route::get('/edit/{parentTraining}', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'edit'])->name('admin.parent-training.edit');
+        Route::put('/update/{parentTraining}', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'update'])->name('admin.parent-training.update');
+        Route::delete('/destroy/{parentTraining}', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'destroy'])->name('admin.parent-training.destroy');
     });
 
     Route::prefix('user')->namespace('User')->group(function () {

@@ -453,11 +453,21 @@ class CourseController extends Controller
 
         return view('admin.market.course.statistics', compact('course', 'getSellLastMonth', 'getSellTotal', 'lession', 'comments', 'days', 'dates', 'summaryCourse'));
     }
-    public function details(Course $course)
+    public function details(Request $request, Course $course)
     {
         $user = auth()->user();
         if ($user->can('show_lession') && $course->teacher_id == $user->id ||  $user->can('manage_course')) {
-            $seasons = $course->season()->orderBy('number','asc')->with('parent')->get();
+            $seasonsQuery = $course->season()->orderBy('number', 'asc')->with('parent');
+
+            if ($request->search) {
+                $seasonsQuery->where('title', 'like', '%' . $request->search . '%');
+            }
+
+            if ($request->filled('status')) {
+                $seasonsQuery->where('confirmation_status', $request->status);
+            }
+
+            $seasons = $seasonsQuery->get();
             $lessions = Lession::where('course_id', $course->id)->get();
             // $users = DB::table('users')->whereNotIn('id', function ($q) use ($course) {
             //     $q->select('user_id')->from('order_items')->where(['course_id' => $course->id]);

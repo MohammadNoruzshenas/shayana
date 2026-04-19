@@ -337,7 +337,19 @@
                 <i class="fa-solid fa-gamepad"></i>
             </a>
         </li>
+        @endpermission
 
+        @permission('manage_event')
+        <li class="item-li i-game {{ \Request::route()->getName() == 'admin.event.index' ? 'is-active' : '' }}">
+            <a href="{{ route('admin.event.index') }}"> رویداد ها
+                <i class="fa-solid fa-calendar-check"></i>
+            </a>
+        </li>
+        <li class="item-li i-game {{ strpos(\Request::route()->getName(), 'admin.parent-training') !== false ? 'is-active' : '' }}">
+            <a href="{{ route('admin.parent-training.index') }}"> آموزش والدین
+                <i class="fa-solid fa-graduation-cap"></i>
+            </a>
+        </li>
         @endpermission
         @permission('manage_discount')
             <button class="accordion"> <i class="fa-solid fa-percent"></i> تخفیف</button>

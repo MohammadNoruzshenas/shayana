@@ -34,6 +34,21 @@
                         </a>
                     @endif
                 </div>
+                <div class="bg-white padding-20 margin-bottom-15 border-radius-3 border-1px-d1d5db">
+                    <div class="d-flex item-center flex-wrap">
+                        <div class="margin-left-10">
+                            <input type="text" id="seasonSearch" placeholder="جستجو در عنوان فصل..." class="text font-size-13" style="width: 250px;">
+                        </div>
+                        <div class="margin-left-10">
+                            <select id="statusFilter" class="text font-size-13" style="width: 150px; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; padding: 0 10px;">
+                                <option value="">همه وضعیت ها</option>
+                                <option value="تایید شده">تایید شده</option>
+                                <option value="رد شده">رد شده</option>
+                                <option value="درحال بررسی">در حال بررسی</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <div class="table__box">
                     <table class="table">
                         <thead role="rowgroup">
@@ -252,6 +267,28 @@
     <script src="{{ asset('dashboard/js/jalalidatepicker/persian-datepicker.min.js') }}"></script>
     
         @include('admin.alerts.sweetalert.delete-confirm', ['className' => 'delete'])
+
+        <script>
+            $(document).ready(function() {
+                function filterTable() {
+                    var searchValue = $('#seasonSearch').val().toLowerCase();
+                    var statusValue = $('#statusFilter').val();
+
+                    $("#tableBodyContents tr").each(function() {
+                        var title = $(this).find('td:nth-child(3)').text().toLowerCase();
+                        var status = $(this).find('td:nth-child(6)').text().trim();
+
+                        var matchesSearch = title.indexOf(searchValue) > -1;
+                        var matchesStatus = statusValue === "" || status === statusValue;
+
+                        $(this).toggle(matchesSearch && matchesStatus);
+                    });
+                }
+
+                $('#seasonSearch').on('input', filterTable);
+                $('#statusFilter').on('change', filterTable);
+            });
+        </script>
 
         <script>
                     $(document).ready(function() {

@@ -43,7 +43,7 @@
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script> --}}
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet"
         type="text/css" />
-    <link rel="icon" type="image/x-icon" href="{{ asset(cache('templateSetting')['logo']) }}">
+   <link rel="icon" type="image/png" sizes="32x32" href="{{ asset(cache('templateSetting')['logo']) }}">
     @yield('head-tag')
 
 

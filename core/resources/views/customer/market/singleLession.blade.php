@@ -35,10 +35,23 @@
             <div class="flex flex-col w-full gap-10 lg:w-2/3">
                 <div class="flex flex-col gap-3 p-5 bg-white  shadow-lg rounded-2xl  dark:bg-dark dark:shadow-none">
                     @if (isset($linkOnlieVideo))
-                        <video class="transition-all duration-300 rounded-xl hover:scale-[.98]" id="player" playsinline
-                            controls data-poster="{{ asset($course->image) }}">
-                            <source src="{{ $linkOnlieVideo }}" type="video/mp4" />
-                        </video>
+                        @if(request()->query('audio') == 1)
+                            <div class="w-full p-4 bg-gray-100 rounded-xl dark:bg-gray-800 flex flex-col items-center justify-center gap-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 text-main">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+                                </svg>
+                                <span class="font-bold text-main">در حال پخش صوتی</span>
+                                <audio class="w-full transition-all duration-300 rounded-xl" id="player" controls autoplay>
+                                    <source src="{{ $linkOnlieVideo }}" type="audio/mp4" />
+                                    <source src="{{ $linkOnlieVideo }}" type="video/mp4" />
+                                </audio>
+                            </div>
+                        @else
+                            <video class="transition-all duration-300 rounded-xl hover:scale-[.98]" id="player" playsinline
+                                controls data-poster="{{ asset($course->image) }}">
+                                <source src="{{ $linkOnlieVideo }}" type="video/mp4" />
+                            </video>
+                        @endif
                     @endif
                     <div class="w-full my-5 flex justify-end items-center gap-3 flex-col lg:flex-row ">
                         @if(!is_null($lession->link))

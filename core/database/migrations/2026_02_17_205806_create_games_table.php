@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('games', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->string('image')->nullable();
-            $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();
-            $table->foreignId('main_season_id')->nullable()->constrained('seasons')->cascadeOnDelete();
-            $table->foreignId('sub_season_id')->nullable()->constrained('seasons')->cascadeOnDelete();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('games')) {
+            Schema::create('games', function (Blueprint $table) {
+                $table->id();
+                $table->string('title');
+                $table->text('description')->nullable();
+                $table->string('image')->nullable();
+                $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();
+                $table->foreignId('main_season_id')->nullable()->constrained('seasons')->cascadeOnDelete();
+                $table->foreignId('sub_season_id')->nullable()->constrained('seasons')->cascadeOnDelete();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

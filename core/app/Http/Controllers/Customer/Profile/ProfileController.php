@@ -65,9 +65,9 @@ class ProfileController extends Controller
         }
 
         $events = \App\Models\Event::orderBy('publish_date', 'desc')->get();
-        $parentTrainings = \App\Models\ParentTraining::orderBy('created_at', 'desc')->get();
+        $chapters = \App\Models\ParentTrainingChapter::orderBy('order', 'asc')->with('trainings')->get();
 
-        return view('customer.profile.index', compact('plans', 'orders', 'course', 'cartItems', 'subscription', 'notifactions', 'payments', 'installments', 'schedules', 'events', 'parentTrainings'));
+        return view('customer.profile.index', compact('plans', 'orders', 'course', 'cartItems', 'subscription', 'notifactions', 'payments', 'installments', 'schedules', 'events', 'chapters'));
     }
     public function update(ProfileUserRequest $request, ImageService $imageService)
     {

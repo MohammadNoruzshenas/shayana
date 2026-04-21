@@ -236,10 +236,18 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     Route::prefix('parent-training')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'index'])->name('admin.parent-training.index');
-        Route::post('/store', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'store'])->name('admin.parent-training.store');
-        Route::get('/edit/{parentTraining}', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'edit'])->name('admin.parent-training.edit');
-        Route::put('/update/{parentTraining}', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'update'])->name('admin.parent-training.update');
-        Route::delete('/destroy/{parentTraining}', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'destroy'])->name('admin.parent-training.destroy');
+        
+        // Chapter Routes
+        Route::post('/chapter/store', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'storeChapter'])->name('admin.parent-training.chapter.store');
+        Route::get('/chapter/{chapter}/edit', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'editChapter'])->name('admin.parent-training.chapter.edit');
+        Route::put('/chapter/{chapter}/update', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'updateChapter'])->name('admin.parent-training.chapter.update');
+        Route::delete('/chapter/{chapter}/destroy', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'destroyChapter'])->name('admin.parent-training.chapter.destroy');
+        
+        // Section Routes
+        Route::post('/section/store', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'storeSection'])->name('admin.parent-training.section.store');
+        Route::get('/section/{parentTraining}/edit', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'editSection'])->name('admin.parent-training.section.edit');
+        Route::put('/section/{parentTraining}/update', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'updateSection'])->name('admin.parent-training.section.update');
+        Route::delete('/section/{parentTraining}/destroy', [\App\Http\Controllers\Admin\ParentTrainingController::class, 'destroySection'])->name('admin.parent-training.section.destroy');
     });
 
     Route::prefix('user')->namespace('User')->group(function () {
